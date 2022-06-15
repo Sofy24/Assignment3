@@ -46,7 +46,7 @@ public abstract class BluetoothChannel implements CommChannel {
 
     /**
      * Used for communication between the Main thread and one
-     * or more Worker threads (BluetoothChannel's workers).
+     * or more Worker threads (BluetoothChannel's workers). banananananas
      */
     class BluetoothChannelHandler extends Handler {
 

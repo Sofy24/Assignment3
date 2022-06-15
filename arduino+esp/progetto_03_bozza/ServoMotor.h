@@ -8,13 +8,12 @@ class ServoMotor {
     ServoMotor(int pin);
     void off();
     void on();
-    void incPosition();
-    void setPosition(int val);
-    int getPosition();
-    void reset();
+    void setSpeed_s(int val);
+    void startIrrigation();
       
   private:
     int pin; 
+    int speed_s;
     ServoTimer2 motor;
 };
 

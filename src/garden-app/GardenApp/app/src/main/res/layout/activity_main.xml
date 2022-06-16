@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_33v"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.33" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_66v"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.66" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp"
+        android:text="@string/smart_garden"
+        android:textSize="35sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="14dp"
+        app:srcCompat="@drawable/ic_baseline_notifications_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/allarm" />
+
+    <TextView
+        android:id="@+id/light_system"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="25dp"
+        android:text="@string/light_system"
+        android:textSize="25sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/light_system_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dividerInsetStart="16dp"
+        app:dividerInsetEnd="16dp"
+        app:dividerColor="@color/blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/light_system"
+        />
+
+    <TextView
+        android:id="@+id/led1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/led1"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@id/guideline_33v"
+        app:layout_constraintTop_toBottomOf="@id/light_system_divider" />
+
+    <Button
+        android:id="@+id/led1_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/on_off"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toStartOf="@id/guideline_33v"
+        app:layout_constraintTop_toBottomOf="@id/led1"
+    />
+
+    <TextView
+        android:id="@+id/led2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="20dp"
+        android:text="@string/led2"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/guideline_66v"
+
+        app:layout_constraintTop_toBottomOf="@id/light_system_divider" />
+
+    <Button
+        android:id="@+id/led2_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/on_off"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toEndOf="@id/guideline_66v"
+        app:layout_constraintTop_toBottomOf="@id/led2"
+        />
+
+
+    <TextView
+        android:id="@+id/led3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="@string/led3"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@id/led1"
+        app:layout_constraintEnd_toEndOf="@id/led1"
+        app:layout_constraintTop_toBottomOf="@id/led1_button" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/led3_slider"
+        android:stepSize="1.0"
+        android:valueFrom="0.0"
+        android:valueTo="4.0"
+        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="14dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/led3"  />
+
+    <TextView
+        android:id="@+id/led4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="@string/led4"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@id/led2"
+        app:layout_constraintEnd_toEndOf="@id/led2"
+        app:layout_constraintTop_toBottomOf="@id/led2_button" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/led4_slider"
+        android:stepSize="1.0"
+        android:valueFrom="0.0"
+        android:valueTo="4.0"
+        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/led4"  />
+
+    <TextView
+        android:id="@+id/irrigation_system"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="14dp"
+        android:text="@string/irrigation_system"
+
+        android:textSize="25sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/led3_slider" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/irrigation_system_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dividerInsetStart="16dp"
+        app:dividerInsetEnd="16dp"
+        app:dividerColor="@color/blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/irrigation_system"
+        />
+
+    <Button
+        android:id="@+id/irrigation_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/open_close"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/irrigation_system_divider"
+        />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/irrigation_slider"
+        android:stepSize="1.0"
+        android:valueFrom="0.0"
+        android:valueTo="4.0"
+        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/irrigation_system_divider"  />
+
+    <Button
+        android:id="@+id/manual_control_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/require_manual_control"
+        android:layout_marginTop="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/irrigation_button"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

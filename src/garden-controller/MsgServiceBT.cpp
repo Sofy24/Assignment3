@@ -18,12 +18,14 @@ bool MsgServiceBT::sendMsg(Msg msg){
 
 bool MsgServiceBT::isMsgAvailable(){
   while (channel->available()) {
+    Serial.println("aviable msg");
     char ch = (char) channel->read();
     if (ch == '\n'){
       availableMsg = new Msg(content); 
       content = "";
       return true;    
     } else {
+      Serial.print(ch);
       content += ch;      
     }
   }

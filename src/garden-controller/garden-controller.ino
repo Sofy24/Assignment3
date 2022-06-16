@@ -9,7 +9,7 @@
 //#include <avr/sleep.h>  
 
 //SoftwareSerial btChannel();
-MsgServiceBT msgService(BLUE_TXD, BLUE_RXD);
+MsgServiceBT msgService( BLUE_RXD,BLUE_TXD );
 
 /**variabili globali*/
 

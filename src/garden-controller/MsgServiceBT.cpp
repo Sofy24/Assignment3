@@ -17,6 +17,9 @@ bool MsgServiceBT::sendMsg(Msg msg){
 }
 
 bool MsgServiceBT::isMsgAvailable(){
+  if(channel->available()!=0){
+    Serial.println(channel->available());
+  }
   while (channel->available()) {
     Serial.println("aviable msg");
     char ch = (char) channel->read();

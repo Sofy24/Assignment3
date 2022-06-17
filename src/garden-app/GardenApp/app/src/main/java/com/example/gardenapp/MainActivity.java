@@ -1,56 +1,44 @@
 package com.example.gardenapp;
 
 
-import android.Manifest;
-import android.content.pm.PackageManager;
+
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.example.gardenapp.utils.C;
 
 import java.util.UUID;
-
-
 public class MainActivity extends AppCompatActivity {
     private BluetoothChannel btChannel;
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.layout_marfoglia);
 
         final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        if (btAdapter != null && !btAdapter.isEnabled()) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission not granted", Toast.LENGTH_LONG).show();
-                return;
-            }
+        if(btAdapter != null && !btAdapter.isEnabled()) {
             startActivityForResult(
                     new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE),
                     C.bluetooth.ENABLE_BT_REQUEST
             );
-        } if( btAdapter == null ){
-            Log .e(" GardenApp","BT is not available on this device ");
-            finish () ;
         }
 
         initUI();
     }
 
     private void initUI() {
-        findViewById(R.id.manual_control_button).setOnClickListener(l -> {
+        findViewById(R.id.connectBtn).setOnClickListener(l -> {
             l.setEnabled(false);
             try {
                 connectToBTServer();
@@ -63,11 +51,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*findViewById(R.id.sendBtn).setOnClickListener(l -> {
+        findViewById(R.id.sendBtn).setOnClickListener(l -> {
             String message = ((EditText)findViewById(R.id.editText)).getText().toString();
             btChannel.sendMessage(message);
             ((EditText)findViewById(R.id.editText)).setText("");
-        });*/
+        });
     }
 
     @Override
@@ -96,17 +84,18 @@ public class MainActivity extends AppCompatActivity {
         final UUID uuid = BluetoothUtils.getEmbeddedDeviceDefaultUuid();
 //        final UUID uuid = BluetoothUtils.generateUuidFromString(C.bluetooth.BT_SERVER_UUID);
 
-        /*new ConnectToBluetoothServerTask(serverDevice, uuid, new ConnectionTask.EventListener() {
+        new ConnectToBluetoothServerTask(serverDevice, uuid, new ConnectionTask.EventListener() {
+            @SuppressLint("MissingPermission")
             @Override
             public void onConnectionActive(final BluetoothChannel channel) {
                 ((TextView) findViewById(R.id.statusLabel)).setText(String.format(
                         "Status : connected to server on device %s",
                         serverDevice.getName()
-                ));*/
+                ));
 
-                findViewById(R.id.manual_control_button).setEnabled(false);
+                findViewById(R.id.connectBtn).setEnabled(false);
 
-                /*btChannel = channel;
+                btChannel = channel;
                 btChannel.registerListener(new RealBluetoothChannel.Listener() {
                     @Override
                     public void onMessageReceived(String receivedMessage) {
@@ -135,6 +124,6 @@ public class MainActivity extends AppCompatActivity {
                         C.bluetooth.BT_DEVICE_ACTING_AS_SERVER_NAME
                 ));
             }
-        }).execute();*/
+        }).execute();
     }
 }

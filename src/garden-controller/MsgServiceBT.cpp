@@ -2,8 +2,8 @@
 #include "MsgServiceBT.h"
 
 
-MsgServiceBT::MsgServiceBT(int rxPin, int txPin){
-  channel = new SoftwareSerial(rxPin, txPin);
+MsgServiceBT::MsgServiceBT(int txdPin, int rxdPin){
+  channel = new SoftwareSerial(txdPin, rxdPin);
 }
 
 void MsgServiceBT::init(){

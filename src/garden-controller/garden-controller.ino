@@ -12,7 +12,8 @@
 MsgServiceBT msgService( BLUE_TXD,BLUE_RXD );
 
 /**variabili globali*/
-
+String device;
+char buf[50];
 
 Led_switch* led_s1;
 Led_switch* led_s2;
@@ -71,13 +72,12 @@ void loop(){
     VALUE:
       in fade or switch the intensity
   */
-  int len = 50;
-  char buf[len];
-  String device;
+
+  
   if (msgService.isMsgAvailable()) {
     Msg* msg = msgService.receiveMsg();
     Serial.println(msg->getContent()); 
-    msg->getContent().toCharArray(buf, len);
+    msg->getContent().toCharArray(buf, 50);
     device = String(strtok(buf,"_"));
     if (device=="L")
     {

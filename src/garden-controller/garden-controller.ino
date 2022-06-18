@@ -60,24 +60,25 @@ void setSleep(){
 /** loop principale */
 void loop(){
   /*
-  led_s1->switchOn();
-  led_s2->switchOn();
-  led_f1->fade(1);
-  led_f2->fade(3);
-  servo->on();
-  for(int s=1;s<=5;s++)
-  {
-    servo->setSpeed_s(s);
-    servo->startIrrigation();
-  }
   
-  servo->off();
   */
   if (msgService.isMsgAvailable()) {
     Msg* msg = msgService.receiveMsg();
     Serial.println(msg->getContent());    
     if (msg->getContent() == "ping"){
        msgService.sendMsg(Msg("pong"));
+       led_s1->switchOn();
+        led_s2->switchOn();
+        led_f1->fade(1);
+        led_f2->fade(3);
+        servo->on();
+        for(int s=1;s<=5;s++)
+        {
+          servo->setSpeed_s(s);
+          servo->startIrrigation();
+        }
+        
+        servo->off();
        delay(500);
     }
     delete msg;

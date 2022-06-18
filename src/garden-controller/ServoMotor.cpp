@@ -29,7 +29,7 @@ void ServoMotor::startIrrigation(){
   //ottieni l'angolo di rotazione del servo
   //int val=motor.read();   
   //return ((val - 750) / 8.3 >= 180 ? 180 :(val - 750) / 8.3);
-  int wait=60/this->speed_s;
+  int wait=60-(this->speed_s * 10);
   int angle;
   // Sweep from 0 to 180 degrees:
   for (angle = 0; angle <= 180; angle += 1) {

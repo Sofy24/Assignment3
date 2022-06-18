@@ -8,6 +8,7 @@ class Led_switch: public Led{
     Led_switch(int pin);
     void switchOff();
     void switchOn();
+    bool change();
 
     private:
     int pin;

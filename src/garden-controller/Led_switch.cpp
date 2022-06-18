@@ -12,6 +12,14 @@ void Led_switch::switchOn(){
       digitalWrite(pin, HIGH);
 }
 
+bool Led_switch::change(){
+  if(digitalRead(pin)==HIGH){
+    this->switchOff();
+  }else{
+    this->switchOn();
+  }
+}
+
 void Led_switch::switchOff(){
       digitalWrite(pin, LOW);
       

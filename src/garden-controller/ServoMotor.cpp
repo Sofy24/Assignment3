@@ -43,7 +43,7 @@ void ServoMotor::startIrrigation(){
     //Serial.println("indietro");
     delay(wait);
   }
-
+  delay(wait*10);
   
 }
 

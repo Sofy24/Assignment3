@@ -59,28 +59,59 @@ void setSleep(){
 
 /** loop principale */
 void loop(){
-  /*
-  
+  /**
+    MSG FORMAT:
+    DEVICE_[ID]_[VALUE]
+    DEVICE:
+      L= led 
+      F= led fade
+      S= switch
+    ID:
+      only in led 1 or 2
+    VALUE:
+      in fade or switch the intensity
   */
+  int len = 50;
+  char buf[len];
+  String device;
   if (msgService.isMsgAvailable()) {
     Msg* msg = msgService.receiveMsg();
-    Serial.println(msg->getContent());    
-    if (msg->getContent() == "ping"){
-       msgService.sendMsg(Msg("pong"));
-       led_s1->switchOn();
-        led_s2->switchOn();
-        led_f1->fade(1);
-        led_f2->fade(3);
-        servo->on();
-        for(int s=1;s<=5;s++)
+    Serial.println(msg->getContent()); 
+    msg->getContent().toCharArray(buf, len);
+    device = String(strtok(buf,"_"));
+    if (device=="L")
+    {
+        Serial.println("giusta L");
+        if(String(strtok(NULL, "_"))=="1")
         {
-          servo->setSpeed_s(s);
-          servo->startIrrigation();
+          Serial.println("giusto 1");
+          led_s1->change();
+        }else{
+          Serial.println("else");
+          led_s2->change();
         }
         
+    }else if(device=="F"){
+        
+        if(String(strtok(NULL, "_"))=="1")
+        {
+          Serial.println("giusto 1");
+          
+          led_f1->fade(String(strtok(NULL, "_")).toInt());
+        }else{
+          Serial.println("else");
+          
+          led_f2->fade(String(strtok(NULL, "_")).toInt());
+        }
+    }else if(device=="S"){
+        int i=String(strtok(NULL, "_")).toInt();
+        Serial.println(i);
+        servo->on();
+        servo->setSpeed_s(i);
+        servo->startIrrigation();
         servo->off();
-       delay(500);
     }
+    delay(500);
     delete msg;
   }
 }

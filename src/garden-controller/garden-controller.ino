@@ -63,15 +63,15 @@ void setSleep(){
 void loop(){
   /**
     MSG FORMAT:
-    DEVICE_[ID]_[VALUE]
-    DEVICE:
-      L= led 
-      F= led fade
-      S= switch
-    ID:
-      only in led 1 or 2
-    VALUE:
-      in fade or switch the intensity
+      DEVICE_[ID]_[VALUE]
+        DEVICE:
+          L= led 
+          F= led fade
+          S= switch
+        ID:
+          only in led 1 or 2
+        VALUE:
+          in fade or servo the intensity (range: 0-4)
   */
 
   

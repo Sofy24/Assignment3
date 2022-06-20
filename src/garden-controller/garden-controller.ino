@@ -5,11 +5,12 @@
 #include "Led_fade.h"
 #include "ServoMotor.h"
 #include "SoftwareSerial.h"
-#include "MsgServiceBT.h"
+#include "MsgService.h"
+//#include "MsgService.h"
 //#include <avr/sleep.h>  
 
 //SoftwareSerial btChannel();
-MsgServiceBT msgService( BLUE_TXD,BLUE_RXD );
+//MsgServiceBT msgServiceBT( BLUE_TXD,BLUE_RXD );
 
 /**variabili globali*/
 String device;
@@ -36,7 +37,7 @@ void setup(){
   led_f2 = new Led_fade(L2_FADE);
   servo = new ServoMotor(SERVO_MOTOR_PIN);
   
-  msgService.init();  
+  MsgServiceBT.init();  
   Serial.begin(9600);
   while (!Serial){}
   Serial.println("ready to go."); 
@@ -74,13 +75,14 @@ void loop(){
   */
 
   
-  if (msgService.isMsgAvailable()) {
-    Msg* msg = msgService.receiveMsg();
+  if (MsgServiceBT.isMsgAvailable()) {
+    Msg* msg = MsgServiceBT.receiveMsg();
     Serial.println(msg->getContent()); 
     msg->getContent().toCharArray(buf, 50);
     device = String(strtok(buf,"_"));
     if (device=="L")
     {
+        MsgServiceBT.sendMsg("pong");
         Serial.println("giusta L");
         if(String(strtok(NULL, "_"))=="1")
         {
@@ -114,4 +116,24 @@ void loop(){
     delay(500);
     delete msg;
   }
+
+
+
+
+
+
+
+
+/* serial*/
+
+  if (MsgService.isMsgAvailable()) {
+    Msg* msg = MsgService.receiveMsg();
+    if (msg->getContent() == "ping"){
+       delay(500);
+       MsgService.sendMsg("pong");
+    }
+    delete msg;
+  }
+
+  
 }

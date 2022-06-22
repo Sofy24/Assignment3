@@ -3,6 +3,9 @@ package com.example.gardenapp;
 
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -13,11 +16,37 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.example.gardenapp.netutils.Http;
 import com.example.gardenapp.utils.C;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
 import java.util.UUID;
+
+import javax.net.ssl.HttpsURLConnection;
+
+
 public class MainActivity extends AppCompatActivity {
     private BluetoothChannel btChannel;
+    private HashMap<String, String> param = new HashMap<>();
 
     @SuppressLint("MissingPermission")
     @Override
@@ -34,10 +63,12 @@ public class MainActivity extends AppCompatActivity {
             );
         }
 
+        param.put("ciao", "d");
+        initUIBluetooth();
         initUI();
     }
 
-    private void initUI() {
+    private void initUIBluetooth() {
         findViewById(R.id.connectBtn).setOnClickListener(l -> {
             l.setEnabled(false);
             try {
@@ -56,6 +87,117 @@ public class MainActivity extends AppCompatActivity {
             btChannel.sendMessage(message);
             ((EditText)findViewById(R.id.editText)).setText("");
         });
+    }
+
+    private void initUI() {
+        findViewById(R.id.connectionStatusBtn).setOnClickListener(v -> {
+            final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            final NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
+
+            if(activeNetwork.isConnectedOrConnecting()){
+                ((TextView)findViewById(R.id.statusLabel2)).setText("Network is connected");
+            }
+        });
+
+        findViewById(R.id.getBtn).setOnClickListener(v -> {
+            tryHttpGet();
+        });
+
+        findViewById(R.id.postBtn).setOnClickListener(v -> {
+
+            try {
+                makePost();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        });
+
+    }
+
+    private void tryHttpGet(){
+        final String url = "http://192.168.1.80:8000/api/";//"https://dummy.restapiexample.com/api/v1/employee/1";
+
+        Http.get(url, response -> {
+            if(response.code() == HttpURLConnection.HTTP_OK) {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ((TextView) findViewById(R.id.resLabel)).setText(response.contentAsString());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+                thread.start();
+            }
+        });
+    }
+
+    /*private void tryHttpPost() throws JSONException {
+
+        final String url = "http://localhost:8000/api/prova";//"http://dummy.restapiexample.com/api/v1/create";
+        final String content = new JSONObject()
+                .put("name","test" + new Random().nextLong())
+                .put("salary","1000")
+                .put("age","30").toString();
+
+        Http.post(url, content.getBytes(), response -> {
+            System.out.println("response-code"+response.code());
+            if(response.code() == HttpURLConnection.HTTP_OK){
+                try {
+                    ((TextView)findViewById(R.id.resLabel)).setText(response.contentAsString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }*/
+
+    private void makePost() throws IOException, JSONException {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("http://192.168.1.80:8000/api/prova");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+                    conn.setRequestProperty("Accept","application/json");
+                    conn.setDoOutput(true);
+                    conn.setDoInput(true);
+
+                    JSONObject jsonParam = new JSONObject();
+                    jsonParam.put("timestamp", 1488873360);
+                    jsonParam.put("uname", "message.getUser()");
+                    jsonParam.put("message", "message.getMessage()");
+                    jsonParam.put("latitude", 0D);
+                    jsonParam.put("longitude", 0D);
+
+                    Log.i("JSON", jsonParam.toString());
+                    DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                    //os.writeBytes(URLEncoder.encode(jsonParam.toString(), "UTF-8"));
+                    os.writeBytes(jsonParam.toString());
+
+                    os.flush();
+                    os.close();
+
+                    Log.i("STATUS", String.valueOf(conn.getResponseCode()));
+                    Log.i("MSG" , conn.getResponseMessage());
+
+                    conn.disconnect();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
     }
 
     @Override

@@ -8,11 +8,11 @@
 #include "Temperature.h"
 
 
-const char* ssid = "LittleBarfly";
-const char* password = "esiot2122";
+const char* ssid = "Wind3 HUB-796C7C";
+const char* password = "447o9t87eak8ls9c";
 
 
-const char *serviceURI = "https://1fcf-137-204-20-125.ngrok.io";
+const char *serviceURI = "http://192.168.1.80:8000/api/";
 Led* led ;
 Photoresistor* photores;
 Temperature* temp;
@@ -56,7 +56,7 @@ void connectToWifi(const char* ssid, const char* password){
 
 void setup() {
   Serial.begin(115200); 
-  //connectToWifi(ssid, password);
+  connectToWifi(ssid, password);
 //  sched.init(100);
   led = new Led(LED);
   photores = new Photoresistor(PHOTORES);
@@ -85,8 +85,35 @@ void loop() {
   Serial.println(photores->getLuminosity()); 
   Serial.println(temp->getTemperature()); 
   delay(5000); 
-  /*
-  if (WiFi.status()== WL_CONNECTED){      
+  if (WiFi.status()== WL_CONNECTED){  
+    //GET
+    HTTPClient http;
+  
+    //String servicePath = String(serviceURI) + "/api/data";
+    String servicePath = String(serviceURI) + "/api";
+ 
+    http.begin(servicePath);
+      
+    // Send HTTP GET request
+    int httpResponseCode = http.GET();
+      
+    if (httpResponseCode>0) {
+      Serial.print("HTTP Response code: ");
+      Serial.println(httpResponseCode);
+      String payload = http.getString();
+      Serial.println(payload);
+    } else {
+      Serial.print("Error code: ");
+      Serial.println(httpResponseCode);
+    }
+    
+    // Free resources
+    http.end();
+
+    delay(2000);
+
+        
+    //POST
     int value = random(15,20);
     int code = sendData(serviceURI, value, "home");
     if (code == 200){
@@ -100,7 +127,7 @@ void loop() {
   } else {
     Serial.println("WiFi Disconnected... Reconnect.");
     connectToWifi(ssid, password);
-  }*/
+  }
 }
 
 

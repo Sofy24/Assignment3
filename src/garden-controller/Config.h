@@ -6,3 +6,8 @@
 #define SERVO_MOTOR_PIN 9
 #define BLUE_RXD 3
 #define BLUE_TXD 2
+
+
+extern String led_type;
+extern int led_id;
+extern int value;

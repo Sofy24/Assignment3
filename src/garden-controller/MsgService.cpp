@@ -74,6 +74,7 @@ void MsgServiceBluetooth::init(){
   channel = new SoftwareSerial(BLUE_TXD, BLUE_RXD);
   channel->begin(9600);
   content.reserve(128);
+  
   content = "";
   currentMsg = NULL;
   msgAvailable = false;  

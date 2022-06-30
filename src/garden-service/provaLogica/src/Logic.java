@@ -1,12 +1,19 @@
 import java.io.*;
 import java.net.*;
+import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import jdk.jfr.ContentType;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.UrlEncodedFormEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -19,12 +26,13 @@ public class Logic {
 
     public static void main(String[] args) throws Exception {
 
-        channel = new SerialCommChannel("COM3",9600);
+        //channel = new SerialCommChannel("COM3",9600);
 
         System.out.println("Waiting Arduino for rebooting...");
-        Thread.sleep(4000);
+        //Thread.sleep(4000);
         System.out.println("Ready.");
-        sendPost();
+        sendPost3();
+        //sendGet();
 
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         server.createContext("/api/prova", new MyHandlerPost());
@@ -33,79 +41,74 @@ public class Logic {
         server.start();
     }
 
-    public static void sendPost() throws IOException {
-        URL url = new URL("http://192.168.43.157/Assignment3/src/garden-dashboard/GardenDashboard.php"); // URL to your application
-        /*Map<String,Object> params = new LinkedHashMap<>();
-        params.put("temp", 5); // All parameters, also easy
-        params.put("light", 17);
-        params.put("modality", 17);
-        params.put("alarm", "allarm");
+    /*public static void sendPost2() throws IOException {
+        URL url = new URL("http://192.168.43.157/Assignment3/src/garden-dashboard/GardenDashboard.php");
+        String result = "";
+        String data = "fName=" + URLEncoder.encode("Atli", "UTF-8");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        try {
 
-        JSONObject json = new JSONObject();
-        json.put("someKey", "someValue");
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setUseCaches(false);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type",
+                    "application/x-www-form-urlencoded");
 
-        StringBuilder postData = new StringBuilder();
-        // POST as urlencoded is basically key-value pairs, as with GET
-        // This creates key=value&key=value&... pairs
-        for (Map.Entry<String,Object> param : params.entrySet()) {
-            if (postData.length() != 0) postData.append('&');
+            // Send the POST data
+            DataOutputStream dataOut = new DataOutputStream(
+                    connection.getOutputStream());
+            dataOut.writeBytes(data);
+            dataOut.flush();
+            dataOut.close();
+
+            BufferedReader in = null;
             try {
-                postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
+                String line;
+                in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = in.readLine()) != null) {
+                    result += line;
+                }
+            } finally {
+                if (in != null) {
+                    in.close();
+                }
             }
-            postData.append('=');
-            try {
-                postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
+
+            String g;
+            while ((g = in.readLine()) != null) {
+                result += g;
             }
+            in.close();
+
+        } finally {
+            connection.disconnect();
+            System.out.println(result);
         }
 
-        // Convert string to byte array, as it should be sent
-        byte[] postDataBytes = postData.toString().getBytes("UTF-8");*/
+    }*/
 
-        // Connect, easy
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-        conn.setRequestProperty("Content-Type", "application/json"); //x-www-form-urlencoded
-        //conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
-        conn.setDoOutput(true);
-        // Tell server that this is POST and in which format is the data
-        conn.setRequestMethod("POST");
-        /*JSONObject payload = new JSONObject();
-        payload.put("temp", 5);
-        payload.put("light", 17);
-        payload.put("modality", 17);
-        payload.put("alarm", "alarm");*/
 
-        String jsonInputString = "{\"temp\": 5, \"light\": 17, \"modality\": 17, \"alarm\": \"alarm\"}";
-        try(OutputStream os = conn.getOutputStream()) {
-            byte[] input = jsonInputString.getBytes("utf-8");
-            os.write(input, 0, input.length);
-        }
-
-        try(BufferedReader br = new BufferedReader(
-                new InputStreamReader(conn.getInputStream(), "utf-8"))) {
-            StringBuilder response = new StringBuilder();
-            String responseLine = null;
-            while ((responseLine = br.readLine()) != null) {
-                response.append(responseLine.trim());
+    public static void sendPost3(){
+        try{
+            //String erg = JOptionPane.showInputDialog("2+3");
+            BufferedReader br = new BufferedReader(new InputStreamReader(new URL("http://192.168.43.220/Assignment3/src/garden-dashboard/GardenDashboard.php?test="+"7").openStream()));
+            String b = br.readLine();
+            System.out.println(b); // print the string b
+            if(b.equalsIgnoreCase("true")){
+                //System.out.println("It is true");
             }
-            System.out.println(response.toString());
+            else {
+                //System.out.println("False");
+            }
+
+        } catch(IOException e){
+            System.out.println("error");
         }
-
-
-
-        /*conn.getOutputStream().write(postDataBytes);
-
-        // This gets the output from your server
-        Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-
-        for (int c; (c = in.read()) >= 0;)
-            System.out.print((char)c);*/
-
-
     }
+
+
+    
 
     static class MyHandler implements HttpHandler {
         @Override
@@ -313,7 +316,7 @@ public class Logic {
             }
 
 
-            System.out.println("SEND DATA TO DASHBOARD: temp-" + temperature + " lum-" + luminosity + " mode-" + mode + " -alarm" +alarm);
+            //System.out.println("SEND DATA TO DASHBOARD: temp-" + temperature + " lum-" + luminosity + " mode-" + mode + " -alarm" +alarm);
 
 
 

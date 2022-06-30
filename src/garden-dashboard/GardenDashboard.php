@@ -19,9 +19,8 @@
         <?php $temp = 24;
             $light = 24;
             $modality = 24;
-            var_dump("hey".$_GET["temp"]);
-            echo "ciaoooooo".$_POST["temp"];
-            var_dump($_POST["temp"]);
+            $test =$_GET["test"];
+            //echo "modality=".$test;
         if(isset($_POST["temp"]) && isset($_POST["light"]) && isset($_POST["modality"]) && isset($_POST["alarm"])): 
             $temp = $_POST["temp"];
             $light = $_POST["light"];

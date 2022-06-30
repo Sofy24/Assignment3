@@ -7,11 +7,11 @@
 #include "Temperature.h"
 #include "Led.h"
 
-const char* ssid = "Mi 10 Lite 5G";//"Sera";
-const char* password = "2cae0ed0b086";//"Bestiel1";
+const char* ssid = "TISCALI";//"Sera";
+const char* password = "vW711nTn8";//"Bestiel1";
 
 
-const char *serviceURI = "http://192.168.43.190:8000/api/";
+const char *serviceURI = "http://192.168.1.160:8000/api/";
 Led* led ;
 Photoresistor* photores;
 Temperature* temp;

@@ -293,10 +293,10 @@ public class Logic {
 
                         if (!alarm) {
                             System.out.println(commands);
-                            Logic.channel.sendMsg(commands);
+                            //channel.sendMsg(commands);
                         } else {
                             System.out.println("ALARM");
-                            Logic.channel.sendMsg("ALARM");
+                            channel.sendMsg("ALARM");
                         }
 //fine aggiunta
                     }

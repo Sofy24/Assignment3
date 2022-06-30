@@ -46,11 +46,29 @@ void ComunicationTask::tick(){
         this->state = EVALUATE_MESSAGE;
         MsgServiceBT.sendMsg("ricevuto");
       }
+      
+      //String prova="L_1,L_2,F_1_0,F_2_0,S_1,S_OFF";
+      
+      String messagges[6]={};
+      for(int i=0;i<6;i++){
+        messagges[i]="";
+      }
+      msg->getContent().toCharArray(buf_tot, 50);
+      String var = String(strtok(buf_tot,","));
+      int i =0;
+      while(var!=""){
+        messagges[i] = var;
+        var = String(strtok(NULL,","));
+        i++;
+      }
+      i=0;
+      
       break;
-
+      
     case EVALUATE_MESSAGE:
+      
       Serial.println("entro evaluate");
-      msg->getContent().toCharArray(buf, 50);
+      messagges[i].toCharArray(buf, 50);
       device = String(strtok(buf,"_"));
       
       if (device=="L")
@@ -102,7 +120,13 @@ void ComunicationTask::tick(){
             servo->off();*/
       }
       delete msg;
-      this->state = CHEK_NEW_MESSAGE;
+      device="";
+      if(messagges[i+1]!=""){
+        i++;
+      }else{
+        this->state = CHEK_NEW_MESSAGE;
+      }
+      
       break;
   }
 }

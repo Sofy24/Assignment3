@@ -3,16 +3,15 @@
 //#include "SoftwareSerial.h"
 #include <Wire.h>
 #include "Config.h"
-#include "Led.h"
 #include "Photoresistor.h"
 #include "Temperature.h"
+#include "Led.h"
+
+const char* ssid = "Sera";
+const char* password = "Bestiel1";
 
 
-const char* ssid = "Wind3 HUB-796C7C";
-const char* password = "447o9t87eak8ls9c";
-
-
-const char *serviceURI = "http://192.168.1.80:8000/api/";
+const char *serviceURI = "http://192.168.43.20:8000/api/";
 Led* led ;
 Photoresistor* photores;
 Temperature* temp;
@@ -63,17 +62,21 @@ void setup() {
   temp = new Temperature(TEMP);
 }
 
-int sendData(String address, float value, String place){  
+int sendData(String address, String value, String place){  
   
    HTTPClient http;    
-   http.begin(address + "/api/data");      
+   http.begin(address + "prova");      
    http.addHeader("Content-Type", "application/json");    
-    
+   Serial.print(address);
+   Serial.println("prova");
    String msg = 
     String("{ \"value\": ") + String(value) + 
     ", \"place\": \"" + place +"\" }";
-   
-   int retCode = http.POST(msg);   
+   Serial.println("SENDING post");
+   Serial.println(msg);
+   int retCode = http.POST(msg);
+   Serial.print("RETURNED CODE: ");
+   Serial.println(retCode);
    http.end();  
       
    return retCode;
@@ -89,10 +92,9 @@ void loop() {
     //GET
     HTTPClient http;
   
-    //String servicePath = String(serviceURI) + "/api/data";
-    String servicePath = String(serviceURI) + "/api";
+    String servicePath = String(serviceURI);
  
-    http.begin(servicePath);
+    /*http.begin(servicePath);
       
     // Send HTTP GET request
     int httpResponseCode = http.GET();
@@ -108,14 +110,11 @@ void loop() {
     }
     
     // Free resources
-    http.end();
+    http.end();*/
 
-    delay(2000);
-
-        
     //POST
-    int value = random(15,20);
-    int code = sendData(serviceURI, value, "home");
+    String value = String(photores->getLuminosity())+"_"+String(temp->getTemperature());
+    int code = sendData(servicePath, value, "home");
     if (code == 200){
        Serial.println("ok");   
      } else {

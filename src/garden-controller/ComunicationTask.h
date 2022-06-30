@@ -8,6 +8,7 @@
 class ComunicationTask: public Task {
   String device;
   char buf[50];
+  char buf_tot[50];
   Task* taskIrrigation;
   Task* taskIllumination;
   Msg* msg;

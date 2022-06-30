@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void tryHttpGet(){
-        final String url = "http://192.168.1.80:8000/api/";//"https://dummy.restapiexample.com/api/v1/employee/1";
+        final String url = "http://192.168.43.20:8000/api/";//"https://dummy.restapiexample.com/api/v1/employee/1";
 
         Http.get(url, response -> {
             if(response.code() == HttpURLConnection.HTTP_OK) {
@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://192.168.1.80:8000/api/prova");
+                    URL url = new URL("http://192.168.43.20:8000/api/prova");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("POST");
                     conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
@@ -233,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
                     conn.setDoInput(true);
 
                     JSONObject jsonParam = new JSONObject();
+                    jsonParam.put("command", "MODE_MANUAL");
                     jsonParam.put("timestamp", 1488873360);
                     jsonParam.put("uname", "message.getUser()");
                     jsonParam.put("message", "message.getMessage()");

@@ -16,6 +16,17 @@
         </header>
         <!--main-->
         <main>
+        <?php $temp = 24;
+            $light = 24;
+            $modality = 24;
+            $test =$_GET["test"];
+            //echo "modality=".$test;
+        if(isset($_POST["temp"]) && isset($_POST["light"]) && isset($_POST["modality"]) && isset($_POST["alarm"])): 
+            $temp = $_POST["temp"];
+            $light = $_POST["light"];
+            $modality = $_POST["modality"];
+            $alarm = $_POST["alarm"];
+            echo "tempppp".$temp; endif ?>
             <section>
                 <h1>Garden Dashboard</h1>
                 <table>
@@ -25,51 +36,13 @@
                       <th>Modality</th>
                     </tr>
                     <tr>
-                      <td>24*C</td>
-                      <td>2</td>
-                      <td>ALLARM</td>
+                      <td><?php echo $temp; ?></td>
+                      <td><?php echo $light; ?></td>
+                      <td><?php echo $modality; ?></td>
                     </tr>
                   </table>
             </section>
-            <section>
-              <main>
-              <?php if(isset($_GET["error"])):  // $_SESSION["isonline"] = 1; header("Location:./home-".$_SESSION["account"].".php");?>
-                <div class="text-center panel panel-danger">
-                    <div class="panel-heading">Errore</div>
-                    <div class="panel-body"><?php echo $_GET["error"]; ?> </div>
-                </div>
-            <?php endif; ?>
-            <form name="accesso" action="template/controllo_accesso.php" method="POST">
-
-                <div class="container-login">
-                    <fieldset >
-                        <legend>Accedi Come:</legend>
-                        <div>
-                            <input type="radio" id="utente" name="account" value="Utente" required>
-                            <label for="utente">Utente</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="venditore" name="account" value="Venditore" required>
-                            <label for="venditore">Venditore</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="fattorino" name="account" value="Fattorino" required>
-                            <label for="fattorino">Fattorino</label>
-                        </div>
-                    </fieldset>
-
-                    <label for="user">Username:</label>
-                    <input type="text" id="user" name="user" required>
-
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-
-                <input type="submit" value="Accedi">
-            </form>
-            </main>
-            </section>
-            
+                        
         </main>
         <!--footer-->
         <footer>
@@ -77,4 +50,3 @@
         </footer>
     </body>
 </html>
-

@@ -7,7 +7,10 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -52,12 +55,30 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothChannel btChannel;
     private HashMap<String, String> param = new HashMap<>();
     private Boolean isServoOn = false;
+    private Button led1Button;
+    private Button led2Button;
+    private Button irrigationButton;
+    private Slider led3Slider;
+    private Slider led4Slider;
+    private Slider irrigationSlider;
 
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        led1Button = findViewById(R.id.led1_button);
+        led2Button = findViewById(R.id.led2_button);
+        irrigationButton = findViewById(R.id.irrigation_button);
+        led4Slider = findViewById(R.id.led4_slider);
+        irrigationSlider = findViewById(R.id.irrigation_slider);
+        led3Slider = findViewById(R.id.led3_slider);
+        led2Button.setEnabled(false);
+        led1Button.setEnabled(false);
+        irrigationButton.setEnabled(false);
+        led3Slider.setEnabled(false);
+        led4Slider.setEnabled(false);
+        irrigationSlider.setEnabled(false);
 
         final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -73,15 +94,26 @@ public class MainActivity extends AppCompatActivity {
         initUI();
     }
 
+
     private void initUIBluetooth() { //connectBtn
         findViewById(R.id.manual_control_button).setOnClickListener(l -> {
             l.setEnabled(false);
+            led1Button.setEnabled(true);
+            led2Button.setEnabled(true);
+            irrigationButton.setEnabled(true);
+            led3Slider.setEnabled(true);
+            led4Slider.setEnabled(true);
+            irrigationSlider.setEnabled(true);
+
             try {
+                makePost("MODE_MANUAL");
                 connectToBTServer();
             } catch (BluetoothDeviceNotFound bluetoothDeviceNotFound) {
                 Toast.makeText(this, "Bluetooth device not found !", Toast.LENGTH_LONG)
                         .show();
                 bluetoothDeviceNotFound.printStackTrace();
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
             } finally {
                 l.setEnabled(true);
             }
@@ -93,21 +125,20 @@ public class MainActivity extends AppCompatActivity {
             ((EditText)findViewById(R.id.editText)).setText("");
         });*/
 
-        findViewById(R.id.led1_button).setOnClickListener(l -> {
+        led1Button.setOnClickListener(l -> {
             String message = "L_1";
             if(btChannel != null){
                 btChannel.sendMessage(message);
             }
         });
 
-        findViewById(R.id.led2_button).setOnClickListener(l -> {
+        led2Button.setOnClickListener(l -> {
             String message = "L_2";
             if(btChannel != null){
                 btChannel.sendMessage(message);
             }
         });
 
-        Slider led3Slider = findViewById(R.id.led3_slider);
         led3Slider.addOnChangeListener(new Slider.OnChangeListener() {
             @Override
             public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
@@ -120,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Slider led4Slider = findViewById(R.id.led4_slider);
         led4Slider.addOnChangeListener(new Slider.OnChangeListener() {
             @Override
             public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
@@ -133,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    findViewById(R.id.irrigation_button).setOnClickListener(l -> {
+    irrigationButton.setOnClickListener(l -> {
         if(isServoOn){
             String message = "S_OFF";
             if(btChannel != null){
@@ -150,8 +180,7 @@ public class MainActivity extends AppCompatActivity {
         }
     });
 
-        Slider ledServoSlider = findViewById(R.id.irrigation_slider);
-        ledServoSlider.addOnChangeListener(new Slider.OnChangeListener() {
+        irrigationSlider.addOnChangeListener(new Slider.OnChangeListener() {
             @Override
             public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
                 String message = "S_";
@@ -163,41 +192,56 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        ImageButton alarmButton = findViewById(R.id.alarm);
+        alarmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    makePost("ALARM_OFF");
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
 
 
 
     }
 
     private void initUI() {
-        findViewById(R.id.connectionStatusBtn).setOnClickListener(v -> {
-            final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        //findViewById(R.id.connectionStatusBtn).setOnClickListener(v -> {
+        final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-            final NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
+        final NetworkInfo activeNetwork = Objects.requireNonNull(cm).getActiveNetworkInfo();
 
-            if(activeNetwork.isConnectedOrConnecting()){
-                ((TextView)findViewById(R.id.statusLabel2)).setText(R.string.network_is_connected);
-            }
-        });
+        if(activeNetwork.isConnectedOrConnecting()){
+            Toast.makeText(MainActivity.this, "You're connect", Toast.LENGTH_LONG)
+                    .show();
+            //((TextView)findViewById(R.id.statusLabel2)).setText(R.string.network_is_connected);
+        }
+       // });
 
-        findViewById(R.id.getBtn).setOnClickListener(v -> {
+        //DECOMMENT FOR DEBUG
+        /*findViewById(R.id.getBtn).setOnClickListener(v -> {
             tryHttpGet();
         });
 
         findViewById(R.id.postBtn).setOnClickListener(v -> {
 
             try {
-                makePost();
+                makePost("MODE_MANUAL");
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-        });
+        });*/
 
     }
 
-    private void tryHttpGet(){
+    /*private void tryHttpGet(){
         final String url = "http://192.168.43.20:8000/api/";//"https://dummy.restapiexample.com/api/v1/employee/1";
 
         Http.get(url, response -> {
@@ -216,15 +260,15 @@ public class MainActivity extends AppCompatActivity {
                 thread.start();
             }
         });
-    }
+    }*/
 
 
-    private void makePost() throws IOException, JSONException {
+    private void makePost(String command) throws IOException, JSONException {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://192.168.43.20:8000/api/prova");
+                    URL url = new URL("http://192.168.43.157:8000/api/prova");
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("POST");
                     conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
@@ -233,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
                     conn.setDoInput(true);
 
                     JSONObject jsonParam = new JSONObject();
-                    jsonParam.put("command", "MODE_MANUAL");
+                    jsonParam.put("command", command); //"MODE_MANUAL"
                     jsonParam.put("timestamp", 1488873360);
                     jsonParam.put("uname", "message.getUser()");
                     jsonParam.put("message", "message.getMessage()");
@@ -250,6 +294,22 @@ public class MainActivity extends AppCompatActivity {
 
                     Log.i("STATUS", String.valueOf(conn.getResponseCode()));
                     Log.i("MSG" , conn.getResponseMessage());
+                    if(conn.getResponseMessage() == "MODE_MANUAL"){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                led1Button.setEnabled(true);
+                                led2Button.setEnabled(true);
+                                irrigationButton.setEnabled(true);
+                                led3Slider.setEnabled(true);
+                                led4Slider.setEnabled(true);
+                                irrigationSlider.setEnabled(true);
+                            }
+                        });
+                    } else if (conn.getResponseMessage() == "MODE_ALARM"){
+                        Toast.makeText(MainActivity.this, "The allarm is on", Toast.LENGTH_LONG)
+                                .show();
+                    }
 
                     conn.disconnect();
                 } catch (Exception e) {

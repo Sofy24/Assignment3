@@ -31,6 +31,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
+        android:id="@+id/alarm"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="14dp"
@@ -210,7 +211,7 @@
         app:layout_constraintTop_toBottomOf="@id/irrigation_button"
         />
 
-    <Button
+    <!--<Button
         android:id="@+id/connectionStatusBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -257,6 +258,6 @@
         android:layout_weight="1"
         android:text="@string/result"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/getnpost"/>
+        app:layout_constraintTop_toBottomOf="@id/getnpost"/>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

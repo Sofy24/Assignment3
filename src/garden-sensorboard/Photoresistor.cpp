@@ -8,9 +8,11 @@ Photoresistor::Photoresistor(int pin){
 }
 
 int Photoresistor::getLuminosity(){
-      int value = analogRead(this->pin);      
+      int value = analogRead(this->pin);   
+         Serial.println("photores: "); 
       Serial.println(value); 
-      value = map(value,2009,4095,0,7);
+      value = map(value,119,4095,0,7);
+      Serial.println("photores: "); 
       Serial.println(value); 
       return value;
 }

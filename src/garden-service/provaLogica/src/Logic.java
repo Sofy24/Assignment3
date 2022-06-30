@@ -6,16 +6,19 @@ import java.nio.charset.StandardCharsets;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+/*
 import jdk.jfr.ContentType;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.UrlEncodedFormEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+ */
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+
 import java.util.concurrent.TimeUnit;
 
 
@@ -26,12 +29,12 @@ public class Logic {
 
     public static void main(String[] args) throws Exception {
 
-        //channel = new SerialCommChannel("COM3",9600);
+        channel = new SerialCommChannel("COM3",9600);
 
         System.out.println("Waiting Arduino for rebooting...");
-        //Thread.sleep(4000);
+        Thread.sleep(4000);
         System.out.println("Ready.");
-        sendPost3();
+        //sendPost3();
         //sendGet();
 
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
@@ -122,13 +125,13 @@ public class Logic {
         }
     }
 
-    static class MyHandlerPost implements HttpHandler{
+    static class MyHandlerPost implements HttpHandler {
 
         public String mode = "MODE_AUTO";
         public Boolean alarm = false;
         public Boolean irrigation;
         public int luminosity;
-        public  int temperature;
+        public int temperature;
 
         @Override
         public void handle(HttpExchange t) throws IOException {
@@ -143,32 +146,32 @@ public class Logic {
 
 
             String command = out.toString()
-                    .replace("{","")
-                    .replace("}","")
+                    .replace("{", "")
+                    .replace("}", "")
                     .split(",")[0].split(":")[1];
 
-            if (command.equals("MODE_MANUAL")){
+            if (command.equals("MODE_MANUAL")) {
                 mode = "MODE_MANUAL";
             }
-            if (command.equals("MODE_AUTO")){
+            if (command.equals("MODE_AUTO")) {
                 mode = "MODE_AUTO";
             }
-            if (command.equals("ALARM_OFF")){
+            if (command.equals("ALARM_OFF")) {
                 alarm = false;
             }
 
-            if (mode.equals("MODE_AUTO")){//esp command
+            if (mode.equals("MODE_AUTO")) {//esp command
                 if (command.contains("_")) {
                     String commands = "";
-                    luminosity = Integer.parseInt(command.split("_")[0].replace(" ",""));
+                    luminosity = Integer.parseInt(command.split("_")[0].replace(" ", ""));
                     temperature = Integer.parseInt(command.split("_")[1]);
 
-                    if (temperature == 5 && !irrigation ){
+                    if (temperature == 5 && !irrigation) {
                         alarm = true;
                     }
-                    //added
+//added
 
-                    /*if (luminosity < 2){
+                    if (luminosity < 2){
                         channel.sendMsg("S_ON");
                         commands = commands.concat("S_ON");
                         irrigation = true;
@@ -181,10 +184,10 @@ public class Logic {
                         TimeUnit.MILLISECONDS.sleep(200);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
-                    }*/
+                    }
 
 //finished part1
-                    if (luminosity < 5){
+                    if (luminosity < 5) {
                         channel.sendMsg("L_1_ON");
                         commands = commands.concat("L_1_ON,");
                         try {
@@ -216,7 +219,7 @@ public class Logic {
                         }
                     }
                     System.out.println(luminosity);
-                    switch (luminosity){
+                    switch (luminosity) {
                         case 0:
                             channel.sendMsg("F_3_4");
                             commands = commands.concat("F_1_4,");
@@ -252,8 +255,8 @@ public class Logic {
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    channel.sendMsg("S_"+temperature);
-                    commands = commands.concat("S_"+temperature+",");
+                    channel.sendMsg("S_" + temperature);
+                    commands = commands.concat("S_" + temperature + ",");
                     try {
                         TimeUnit.MILLISECONDS.sleep(200);
                     } catch (InterruptedException e) {
@@ -266,14 +269,17 @@ public class Logic {
                         //channel.sendMsg(commands);
 */
 //aggiunta
-                    if (luminosity < 2){
-                        //channel.sendMsg("S_ON");
+                    /*
+                    if (luminosity < 2) {
+                        channel.sendMsg("S_ON");
                         commands = commands.concat("S_ON");
                         irrigation = true;
                     } else {
-                        //channel.sendMsg("S_OFF");
+                        channel.sendMsg("S_OFF");
                         commands = commands.concat("S_OFF");
                         irrigation = false;
+                    }*/
+
 //fine add2
 /*
                     }
@@ -285,36 +291,35 @@ public class Logic {
 //agguiunta 3
 
 
-                    if (!alarm) {
-                        System.out.println(commands);
-                        Logic.channel.sendMsg(commands);
-                    }
-                    else {
-                        System.out.println("ALARM");
-                        Logic.channel.sendMsg("ALARM");
-                    }
+                        if (!alarm) {
+                            System.out.println(commands);
+                            Logic.channel.sendMsg(commands);
+                        } else {
+                            System.out.println("ALARM");
+                            Logic.channel.sendMsg("ALARM");
+                        }
 //fine aggiunta
+                    }
                 }
+
+
+                //System.out.println("SEND DATA TO DASHBOARD: temp-" + temperature + " lum-" + luminosity + " mode-" + mode + " -alarm" +alarm);
+
+
+                String response = "MODE_MANUAL";
+                if (alarm) {
+                    response = "MODE_ALARM";
+                }
+                t.sendResponseHeaders(200, response.length());
+                OutputStream os = t.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
             }
-
-
-
-            //System.out.println("SEND DATA TO DASHBOARD: temp-" + temperature + " lum-" + luminosity + " mode-" + mode + " -alarm" +alarm);
-
-
-
-
-            String response = "MODE_MANUAL";
-            if (alarm){
-                response ="MODE_ALARM";
-            }
-            t.sendResponseHeaders(200, response.length());
-            OutputStream os = t.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
         }
-    }
 
 
 
 }
+
+
+

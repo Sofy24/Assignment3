@@ -13,6 +13,7 @@
 Scheduler sched;
 String led_type;
 int led_id;
+bool led_on;
 int value=0;
 
 
@@ -27,7 +28,7 @@ void setup(){
   illuminationTask->setActive(false);
   
   Task* irrigationTask = new IrrigationTask();
-  irrigationTask->init(50);
+  irrigationTask->init(100);
   sched.addTask(irrigationTask);
   irrigationTask->setActive(false);
 

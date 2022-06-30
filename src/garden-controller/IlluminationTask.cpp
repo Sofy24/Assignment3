@@ -17,6 +17,7 @@ void IlluminationTask::init(int period){
 void IlluminationTask::tick(){
   switch (state){
     case CHANGE_ILLUMINATION:
+    Serial.println("ILLUMINA!");
       if(led_type=="L")
       {
         if(led_id==1){
@@ -27,7 +28,10 @@ void IlluminationTask::tick(){
       }else{
         if(led_id==1){
           led_f1->fade(value);
-        }else{
+        }else if (led_id==2){
+          led_f2->fade(value);
+        } else if (led_id==3) {
+          led_f1->fade(value);
           led_f2->fade(value);
         }
       }

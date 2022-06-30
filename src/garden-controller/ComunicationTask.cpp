@@ -46,31 +46,20 @@ void ComunicationTask::tick(){
         this->state = EVALUATE_MESSAGE;
         MsgServiceBT.sendMsg("ricevuto");
       }
-      
-      //String prova="L_1,L_2,F_1_0,F_2_0,S_1,S_OFF";
-      
-      String messagges[6]={};
-      for(int i=0;i<6;i++){
-        messagges[i]="";
-      }
-      msg->getContent().toCharArray(buf_tot, 50);
-      String var = String(strtok(buf_tot,","));
-      int i =0;
-      while(var!=""){
-        messagges[i] = var;
-        var = String(strtok(NULL,","));
-        i++;
-      }
-      i=0;
-      
+      //this->state = EVALUATE_MESSAGE;
       break;
-      
+
     case EVALUATE_MESSAGE:
+      Serial.print("entro evaluate : ");
       
-      Serial.println("entro evaluate");
-      messagges[i].toCharArray(buf, 50);
+      msg->getContent().toCharArray(buf, 50);
+      //String cmd = "F_2_4";
+      //cmd.toCharArray(buf, 50);
+      Serial.println(buf);
       device = String(strtok(buf,"_"));
-      
+      if (device == "ALARM") {
+        MsgServiceBT.sendMsg("ALARM");
+      }
       if (device=="L")
       {
           led_type=device;
@@ -86,21 +75,38 @@ void ComunicationTask::tick(){
             led_id=2;
             //led_s2->change();
           }
+          String isOn = String(strtok(NULL, "_"));
+          Serial.println(isOn);
+          if(isOn=="ON")
+          {
+            Serial.println("on");
+            led_on = true;
+          } else if (isOn=="OFF"){
+            Serial.println("off");
+            led_on = false;
+          } else if (isOn==NULL){
+            led_on = !led_on;
+          }
           taskIllumination->setActive(true);
+          
       }else if(device=="F"){
           led_type=device;
-          if(String(strtok(NULL, "_"))=="1")
+          String fadeLed = String(strtok(NULL, "_"));
+          if(fadeLed =="1")
           {
             Serial.println("giusto 1");
             led_id=1;
               //led_f1->fade(String(strtok(NULL, "_")).toInt());
-          }else{
+          }else if (fadeLed =="2"){
             Serial.println("else");
             led_id=2;
               //led_f2->fade(String(strtok(NULL, "_")).toInt());
+          }else if (fadeLed =="3"){
+            led_id=3;
           }
           value=String(strtok(NULL, "_")).toInt();
           taskIllumination->setActive(true);
+          
       }else if(device=="S"){
           Serial.println("servo");
           String val = String(strtok(NULL, "_"));
@@ -111,7 +117,7 @@ void ComunicationTask::tick(){
             taskIrrigation->setActive(false);
           }else{
             value=val.toInt();
-            taskIrrigation->init(1000-(val.toInt()*10));
+            taskIrrigation->init(1000-(val.toInt()*50));
           }
             /*
             servo->on();
@@ -119,14 +125,9 @@ void ComunicationTask::tick(){
             servo->startIrrigation();
             servo->off();*/
       }
+      device = "";
       delete msg;
-      device="";
-      if(messagges[i+1]!=""){
-        i++;
-      }else{
-        this->state = CHEK_NEW_MESSAGE;
-      }
-      
+      this->state = CHEK_NEW_MESSAGE;
       break;
   }
 }

@@ -10,4 +10,5 @@
 
 extern String led_type;
 extern int led_id;
+extern bool led_on;
 extern int value;

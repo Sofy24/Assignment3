@@ -13,7 +13,7 @@ void Led_switch::switchOn(){
 }
 
 bool Led_switch::change(){
-  if(digitalRead(pin)==HIGH){
+  if(!led_on){
     this->switchOff();
   }else{
     this->switchOn();

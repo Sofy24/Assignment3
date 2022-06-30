@@ -47,6 +47,9 @@ public class Logic {
 
         public String mode = "MODE_AUTO";
         public Boolean alarm = false;
+        public Boolean irrigation;
+        public int luminosity;
+        public  int temperature;
 
         @Override
         public void handle(HttpExchange t) throws IOException {
@@ -78,36 +81,55 @@ public class Logic {
             if (mode.equals("MODE_AUTO")){//esp command
                 if (command.contains("_")) {
                     String commands = "";
-                    int luminosity = Integer.parseInt(command.split("_")[0].replace(" ",""));
-                    int temperature = Integer.parseInt(command.split("_")[1]);
+                    luminosity = Integer.parseInt(command.split("_")[0].replace(" ",""));
+                    temperature = Integer.parseInt(command.split("_")[1]);
+
+                    if (temperature == 5 && !irrigation ){
+                        alarm = true;
+                    }
+
+                    if (luminosity < 2){
+                        channel.sendMsg("S_ON");
+                        commands = commands.concat("S_ON");
+                        irrigation = true;
+                    } else {
+                        channel.sendMsg("S_OFF");
+                        commands = commands.concat("S_OFF");
+                        irrigation = false;
+                    }
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(200);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     if (luminosity < 5){
-                        //channel.sendMsg("L_1");
-                        commands = commands.concat("L_1,");
+                        channel.sendMsg("L_1_ON");
+                        commands = commands.concat("L_1_ON,");
                         try {
-                            TimeUnit.MILLISECONDS.sleep(60);
+                            TimeUnit.MILLISECONDS.sleep(200);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        //channel.sendMsg("L_2");
-                        commands = commands.concat("L_2,");
+                        channel.sendMsg("L_2_ON");
+                        commands = commands.concat("L_2_ON,");
                         try {
-                            TimeUnit.MILLISECONDS.sleep(60);
+                            TimeUnit.MILLISECONDS.sleep(200);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
                     } else {
-                        //channel.sendMsg("L_1");
-                        commands = commands.concat("L_1,");
+                        channel.sendMsg("L_1_OFF");
+                        commands = commands.concat("L_1_OFF,");
                         try {
-                            TimeUnit.MILLISECONDS.sleep(60);
+                            TimeUnit.MILLISECONDS.sleep(200);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        //channel.sendMsg("L_2");
-                        commands = commands.concat("L_2,");
+                        channel.sendMsg("L_2_OFF");
+                        commands = commands.concat("L_2_OFF,");
                         try {
-                            TimeUnit.MILLISECONDS.sleep(60);
+                            TimeUnit.MILLISECONDS.sleep(200);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -115,117 +137,70 @@ public class Logic {
                     System.out.println(luminosity);
                     switch (luminosity){
                         case 0:
-                            //channel.sendMsg("F_1_4");
+                            channel.sendMsg("F_3_4");
                             commands = commands.concat("F_1_4,");
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(60);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
                             //channel.sendMsg("F_2_4");
                             commands = commands.concat("F_2_4,");
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(60);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
                             break;
                         case 1:
-                            //channel.sendMsg("F_1_3");
+                            channel.sendMsg("F_3_3");
                             commands = commands.concat("F_1_3,");
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(60);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
                             //channel.sendMsg("F_2_3");
                             commands = commands.concat("F_2_3,");
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(60);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
                             break;
                         case 2:
-                            //channel.sendMsg("F_1_2");
+                            channel.sendMsg("F_3_2");
                             commands = commands.concat("F_1_2,");
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(60);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
-                            //channel.sendMsg("F_2_2");
                             commands = commands.concat("F_2_2,");
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(60);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
                             break;
                         case 3:
-                            //channel.sendMsg("F_1_1");
+                            channel.sendMsg("F_3_1");
                             commands = commands.concat("F_1_1,");
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(60);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
                             //channel.sendMsg("F_2_1");
                             commands = commands.concat("F_2_1,");
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(60);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
                             break;
                         default:
-                            //channel.sendMsg("F_1_0");
+                            channel.sendMsg("F_3_0");
                             commands = commands.concat("F_1_0,");
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(60);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
                             //channel.sendMsg("F_2_0");
                             commands = commands.concat("F_2_0,");
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(60);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
-                    }
 
-                    //channel.sendMsg("S_"+temperature);
+                    }
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(200);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    channel.sendMsg("S_"+temperature);
                     commands = commands.concat("S_"+temperature+",");
                     try {
-                        TimeUnit.MILLISECONDS.sleep(60);
+                        TimeUnit.MILLISECONDS.sleep(200);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    if (luminosity < 2){
-                        //channel.sendMsg("S_ON");
-                        commands = commands.concat("S_ON");
-                    } else {
-                        //channel.sendMsg("S_OFF");
-                        commands = commands.concat("S_OFF");
+
+
+
+                    if (!alarm) {
+                        System.out.println(commands);
+                        //channel.sendMsg(commands);
                     }
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(60);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    else {
+                        System.out.println("ALARM");
+                        channel.sendMsg("ALARM");
                     }
-                    System.out.println(commands);
-                    channel.sendMsg(commands);
                 }
             }
 
 
-            if (false){
-                alarm = true;
+            System.out.println("SEND DATA TO DASHBOARD: temp-" + temperature + " lum-" + luminosity + " mode-" + mode + " -alarm" +alarm);
+
+
+
+            String response = "MODE_MANUAL";
+            if (alarm){
+                response ="MODE_ALARM";
             }
-
-
-            String response = "This is the response post";
             t.sendResponseHeaders(200, response.length());
             OutputStream os = t.getResponseBody();
             os.write(response.getBytes());
